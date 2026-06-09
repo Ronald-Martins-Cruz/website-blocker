@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Website Blocker</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <h1 class="popup-title">Website Blocker</h1>
+
+      <form id="add-form" class="add-form">
+        <input
+          id="domain-input"
+          type="text"
+          class="domain-input"
+          placeholder="e.g. youtube.com"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button type="submit" class="add-button">Add</button>
+      </form>
+
+      <p id="add-error" class="add-error"></p>
+
+      <ul id="blocklist" class="blocklist"></ul>
+    </main>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

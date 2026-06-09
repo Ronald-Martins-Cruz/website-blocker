@@ -1,0 +1,152 @@
+/* popup.css — compact toolbar popup styling. */
+
+:root {
+  --bg: #ffffff;
+  --fg: #1f2328;
+  --muted: #57606a;
+  --border: #d0d7de;
+  --accent: #0969da;
+  --accent-hover: #0860ca;
+  --danger: #cf222e;
+  --row-bg: #f6f8fa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 320px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  font-size: 14px;
+  color: var(--fg);
+  background: var(--bg);
+}
+
+.popup {
+  padding: 14px;
+}
+
+.popup-title {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Add form */
+.add-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.domain-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 7px 9px;
+  font-size: 14px;
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+.domain-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.25);
+}
+
+.add-button {
+  flex: 0 0 auto;
+  padding: 7px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.add-button:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.add-button:active {
+  transform: translateY(1px);
+}
+
+/* Inline error */
+.add-error {
+  margin: 0 0 8px;
+  min-height: 1em;
+  font-size: 12.5px;
+  color: var(--danger);
+}
+
+.add-error:empty {
+  margin: 0;
+  min-height: 0;
+}
+
+/* Blocklist */
+.blocklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.blocklist-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  background: var(--row-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.blocklist-domain {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13.5px;
+}
+
+.blocklist-remove {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  font-size: 12.5px;
+  color: var(--danger);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.blocklist-remove:hover {
+  color: #ffffff;
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+.blocklist-remove:active {
+  transform: translateY(1px);
+}

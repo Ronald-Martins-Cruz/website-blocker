@@ -1,0 +1,53 @@
+:root {
+  --bg: #eef2f7;
+  --card-bg: #ffffff;
+  --title: #2b3a55;
+  --text: #5a6b85;
+  --shadow: rgba(43, 58, 85, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  line-height: 1.6;
+}
+
+.card {
+  width: 100%;
+  max-width: 30rem;
+  padding: 2.75rem 2.25rem;
+  text-align: center;
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px var(--shadow);
+}
+
+.title {
+  margin: 0 0 1rem;
+  font-size: 2.25rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--title);
+}
+
+.message {
+  margin: 0;
+  font-size: 1.1rem;
+}

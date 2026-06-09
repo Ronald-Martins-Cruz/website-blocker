@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Website Blocker — Options</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="options" id="options-root">
+      <header class="options-header">
+        <h1 class="options-title">Website Blocker</h1>
+        <p class="options-intro">
+          Manage the list of sites you want to keep out of your way. Add a
+          domain to block it everywhere, or remove one to allow it again.
+          Changes apply immediately — no restart required.
+        </p>
+      </header>
+
+      <form id="add-form" class="add-form">
+        <input
+          id="domain-input"
+          type="text"
+          class="domain-input"
+          placeholder="e.g. youtube.com"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button type="submit" class="add-button">Add</button>
+      </form>
+
+      <p id="add-error" class="add-error"></p>
+
+      <ul id="blocklist" class="blocklist"></ul>
+    </main>
+
+    <script type="module" src="options.js"></script>
+  </body>
+</html>
