@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Block distracting websites with a Be Aware reminder page.",
   "author": "Ronald Martins Cruz",
-  "permissions": ["declarativeNetRequest", "storage", "tabs"],
+  "permissions": ["declarativeNetRequest", "storage", "tabs", "alarms"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "src/background.js",

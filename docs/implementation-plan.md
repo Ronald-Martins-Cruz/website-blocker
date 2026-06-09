@@ -1,3 +1,5 @@
+# Already implemented
+
 # Implementation Plan — Website Blocker Extension
 
 This plan turns the design in [requirements.md](requirements.md),
