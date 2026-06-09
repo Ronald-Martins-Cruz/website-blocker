@@ -3,6 +3,7 @@
   --card-bg: #1a212e;
   --title: #e6ecf5;
   --text: #9aa7bd;
+  --accent: #6fb1c9;
   --shadow: rgba(0, 0, 0, 0.45);
 }
 
@@ -32,22 +33,97 @@ body {
 .card {
   width: 100%;
   max-width: 30rem;
-  padding: 2.75rem 2.25rem;
+  padding: 3rem 2.25rem;
   text-align: center;
   background: var(--card-bg);
   border-radius: 16px;
   box-shadow: 0 12px 32px var(--shadow);
 }
 
-.title {
-  margin: 0 0 1rem;
-  font-size: 2.25rem;
+.eyebrow {
+  margin: 0 0 2rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Breathing guide */
+.breath {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 9rem;
+  height: 9rem;
+  margin: 0 auto 2.25rem;
+}
+
+.breath-circle {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(111, 177, 201, 0.35),
+    rgba(111, 177, 201, 0.05)
+  );
+  border: 1px solid rgba(111, 177, 201, 0.4);
+  animation: breathe 11s ease-in-out infinite;
+}
+
+.breath-text {
+  position: relative;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
   color: var(--title);
+  animation: breathe-label 11s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(0.7);
+  }
+  36% {
+    transform: scale(1);
+  }
+  64% {
+    transform: scale(1);
+  }
+}
+
+@keyframes breathe-label {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  36%,
+  64% {
+    opacity: 1;
+  }
 }
 
 .message {
-  margin: 0;
+  margin: 0 0 1.5rem;
   font-size: 1.1rem;
+  color: var(--text);
+}
+
+.prompt {
+  margin: 0;
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--title);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breath-circle,
+  .breath-text {
+    animation: none;
+  }
+  .breath-circle {
+    transform: scale(0.9);
+  }
 }

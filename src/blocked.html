@@ -3,16 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Be Aware</title>
+    <title>Take a Breath</title>
     <link rel="stylesheet" href="blocked.css" />
   </head>
   <body>
     <main class="card">
-      <h1 class="title">Be Aware</h1>
+      <p class="eyebrow">A moment of pause</p>
+
+      <div class="breath" aria-hidden="true">
+        <div class="breath-circle"></div>
+        <span class="breath-text">Breathe</span>
+      </div>
+
       <p class="message">
-        You chose to block this site. Take a breath, and return to what
-        matters to you right now.
+        You came here on purpose to step away from this site. Notice the urge
+        without judging it — let it rise, and let it pass.
       </p>
+
+      <p class="prompt" id="prompt"></p>
     </main>
+
+    <script src="blocked.js"></script>
   </body>
 </html>
