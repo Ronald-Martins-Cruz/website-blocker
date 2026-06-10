@@ -1,4 +1,4 @@
-// background.js — DNR sync engine (MV3 service worker, ES module).
+// service-worker.js — DNR sync engine (MV3 service worker, ES module).
 // Reads the blocklist + breaks from storage.js and mirrors the *effective*
 // host set into chrome declarativeNetRequest dynamic rules. The worker may
 // sleep; that's fine because DNR rules and chrome.alarms both persist
@@ -39,7 +39,7 @@ function buildRule(host, id) {
   return {
     id,
     priority: 1,
-    action: { type: "redirect", redirect: { extensionPath: "/src/blocked.html" } },
+    action: { type: "redirect", redirect: { extensionPath: "/src/be-aware-page.html" } },
     condition: {
       regexFilter: "^https?://(?:www\\.)?" + escapeRegex(host) + "(?::\\d+)?(?:[/?#]|$)",
       resourceTypes: ["main_frame"]
@@ -158,7 +158,7 @@ async function fullSync() {
 // once. A detached window is used (not the popup) because a popup closes on
 // blur, which would lose the ~48s ceremony on any outside click.
 
-const BREATHE_PAGE = "src/breathe.html";
+const BREATHE_PAGE = "src/breathing-pause.html";
 
 /**
  * Open the breathe window for a requested break and remember what it will

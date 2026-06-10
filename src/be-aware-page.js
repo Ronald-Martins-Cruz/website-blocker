@@ -1,4 +1,4 @@
-// blocked.js — picks a fresh reflective prompt each time the "Be Aware" page
+// be-aware-page.js — picks a fresh reflective prompt each time the "Be Aware" page
 // loads. Lives in its own file because MV3's extension-page CSP (script-src
 // 'self') forbids inline scripts.
 

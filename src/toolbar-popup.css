@@ -1,14 +1,23 @@
-/* popup.css — compact toolbar popup styling. */
+/* toolbar-popup.css — compact toolbar popup styling.
+   Shares the calm, dark aesthetic of the breathing window (breathing-pause.css)
+   and the "Be Aware" wall (be-aware-page.css): deep navy canvas, soft cards, a
+   quiet teal accent. Class names are shared with blocklist-ui.js — keep in sync. */
 
 :root {
-  --bg: #ffffff;
-  --fg: #1f2328;
-  --muted: #57606a;
-  --border: #d0d7de;
-  --accent: #0969da;
-  --accent-hover: #0860ca;
-  --danger: #cf222e;
-  --row-bg: #f6f8fa;
+  --bg: #0f141c;
+  --surface: #1a212e;
+  --surface-soft: #202836;
+  --border: #2b3445;
+  --title: #e6ecf5;
+  --fg: #e6ecf5;
+  --text: #9aa7bd;
+  --muted: #76839a;
+  --accent: #6fb1c9;
+  --accent-hover: #8ac5db;
+  --accent-soft: rgba(111, 177, 201, 0.16);
+  --danger: #e07a7a;
+  --row-bg: #202836;
+  --radius: 12px;
 }
 
 * {
@@ -23,24 +32,27 @@ body {
 
 body {
   width: 320px;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 14px;
-  color: var(--fg);
+  line-height: 1.5;
+  color: var(--text);
   background: var(--bg);
 }
 
 .popup {
-  padding: 14px;
+  padding: 16px;
 }
 
 .popup-title {
-  margin: 0 0 12px;
-  font-size: 16px;
-  font-weight: 600;
+  margin: 0 0 14px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--title);
 }
 
-/* Add form */
+/* Add form ----------------------------------------------------------------- */
 .add-form {
   display: flex;
   gap: 8px;
@@ -50,30 +62,36 @@ body {
 .domain-input {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 7px 9px;
+  padding: 9px 11px;
   font-size: 14px;
-  color: var(--fg);
+  color: var(--title);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--bg);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.domain-input::placeholder {
+  color: var(--muted);
 }
 
 .domain-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.25);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .add-button {
   flex: 0 0 auto;
-  padding: 7px 14px;
+  padding: 9px 16px;
   font-size: 14px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--bg);
   background: var(--accent);
   border: 1px solid var(--accent);
-  border-radius: 6px;
+  border-radius: var(--radius);
   cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .add-button:hover {
@@ -85,7 +103,7 @@ body {
   transform: translateY(1px);
 }
 
-/* Inline error */
+/* Inline error ------------------------------------------------------------- */
 .add-error {
   margin: 0 0 8px;
   min-height: 1em;
@@ -98,14 +116,51 @@ body {
   min-height: 0;
 }
 
-/* Blocklist */
+/* Breathing-gate toggle ---------------------------------------------------- */
+.breathe-toggle-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  user-select: none;
+}
+
+.breathe-toggle {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.breathe-toggle-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--title);
+}
+
+.breathe-toggle-text small {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* Blocklist ---------------------------------------------------------------- */
 .blocklist {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   max-height: 300px;
   overflow-y: auto;
 }
@@ -115,10 +170,10 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 7px 10px;
-  background: var(--row-bg);
+  padding: 10px 12px;
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--radius);
 }
 
 .blocklist-domain {
@@ -128,57 +183,65 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 13.5px;
+  font-weight: 600;
+  color: var(--title);
 }
 
 .blocklist-remove {
   flex: 0 0 auto;
-  padding: 4px 10px;
+  padding: 5px 11px;
   font-size: 12.5px;
+  font-weight: 600;
   color: var(--danger);
   background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  border: 1px solid var(--danger);
+  border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .blocklist-remove:hover {
-  color: #ffffff;
+  color: var(--bg);
   background: var(--danger);
-  border-color: var(--danger);
 }
 
 .blocklist-remove:active {
   transform: translateY(1px);
 }
 
-/* Global break panel */
+/* Global break panel ------------------------------------------------------- */
 .global-break {
   margin-bottom: 12px;
-  padding: 10px;
-  background: var(--row-bg);
+  padding: 12px;
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--radius);
+}
+
+.global-break:empty {
+  display: none;
 }
 
 .global-break-title {
   margin: 0 0 8px;
   font-size: 13px;
   font-weight: 600;
+  color: var(--title);
 }
 
 .global-break-remaining {
   margin: 0 0 8px;
   font-size: 13px;
-  color: var(--muted);
+  color: var(--text);
 }
 
 .global-break-remaining span {
   font-weight: 600;
-  color: var(--fg);
+  color: var(--accent);
   font-variant-numeric: tabular-nums;
 }
 
-/* Break form (global + inline per-row) */
+/* Break form (global + inline per-row) ------------------------------------- */
 .break-form {
   display: flex;
   align-items: center;
@@ -201,12 +264,12 @@ body {
 .duration-hours,
 .duration-minutes {
   width: 48px;
-  padding: 5px 6px;
+  padding: 6px 7px;
   font-size: 13px;
-  color: var(--fg);
-  background: var(--bg);
+  color: var(--title);
+  background: var(--surface-soft);
   border: 1px solid var(--border);
-  border-radius: 5px;
+  border-radius: 7px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -214,7 +277,7 @@ body {
 .duration-minutes:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.25);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .duration-label {
@@ -223,14 +286,15 @@ body {
 }
 
 .break-start {
-  padding: 5px 12px;
+  padding: 6px 14px;
   font-size: 13px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--bg);
   background: var(--accent);
   border: 1px solid var(--accent);
-  border-radius: 5px;
+  border-radius: 7px;
   cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .break-start:hover {
@@ -239,28 +303,29 @@ body {
 }
 
 .break-start-small {
-  padding: 4px 10px;
+  padding: 5px 11px;
   font-size: 12.5px;
 }
 
 .break-cancel {
-  padding: 5px 12px;
+  padding: 6px 13px;
   font-size: 13px;
   font-weight: 600;
   color: var(--accent);
   background: transparent;
   border: 1px solid var(--accent);
-  border-radius: 5px;
+  border-radius: 7px;
   cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .break-cancel:hover {
   background: var(--accent);
-  color: #ffffff;
+  color: var(--bg);
 }
 
 .break-cancel-small {
-  padding: 3px 9px;
+  padding: 4px 10px;
   font-size: 12px;
 }
 
@@ -276,7 +341,7 @@ body {
   min-height: 0;
 }
 
-/* Per-row break controls */
+/* Per-row break controls --------------------------------------------------- */
 .blocklist-row {
   display: flex;
   align-items: center;
@@ -298,19 +363,20 @@ body {
 }
 
 .break-toggle {
-  padding: 3px 9px;
+  padding: 4px 11px;
   font-size: 12px;
   font-weight: 600;
-  color: var(--muted);
-  background: transparent;
+  color: var(--text);
+  background: var(--surface-soft);
   border: 1px solid var(--border);
-  border-radius: 5px;
+  border-radius: 7px;
   cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
 
 .break-toggle:hover {
-  color: var(--fg);
-  border-color: var(--fg);
+  color: var(--title);
+  border-color: var(--accent);
 }
 
 .blocklist-remaining {

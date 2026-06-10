@@ -3,28 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Website Blocker — Options</title>
-    <link rel="stylesheet" href="options.css" />
+    <title>Website Blocker</title>
+    <link rel="stylesheet" href="toolbar-popup.css" />
   </head>
   <body>
-    <main class="options" id="options-root">
-      <header class="options-header">
-        <h1 class="options-title">Website Blocker</h1>
-        <p class="options-intro">
-          Manage the list of sites you want to keep out of your way. Add a
-          domain to block it everywhere, or remove one to allow it again.
-          Changes apply immediately — no restart required.
-        </p>
-      </header>
+    <main class="popup">
+      <h1 class="popup-title">Website Blocker</h1>
 
       <section id="global-break" class="global-break"></section>
 
       <label class="breathe-toggle-row">
         <input type="checkbox" id="breathe-toggle" class="breathe-toggle" />
-        <span class="breathe-toggle-text">
-          Breathing pause before a break
-          <small>A short box-breathing ceremony when you start any break.</small>
-        </span>
+        <span class="breathe-toggle-text">Breathing pause before a break</span>
       </label>
 
       <form id="add-form" class="add-form">
@@ -44,6 +34,6 @@
       <ul id="blocklist" class="blocklist"></ul>
     </main>
 
-    <script type="module" src="options.js"></script>
+    <script type="module" src="toolbar-popup.js"></script>
   </body>
 </html>

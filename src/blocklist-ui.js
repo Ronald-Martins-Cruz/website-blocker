@@ -1,4 +1,4 @@
-// ui.js — shared render/add/remove + break logic for popup + options.
+// blocklist-ui.js — shared render/add/remove + break logic for popup + settings page.
 // CSP-safe: no innerHTML with user data, no inline handlers.
 //
 // DOM CONTRACT — the HTML page must provide, inside `root`:

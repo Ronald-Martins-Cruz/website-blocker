@@ -1,12 +1,12 @@
-// breathe.js — the box-breathing ceremony (FB-2) shown in a detached window
-// before a break is granted. Lives in its own file because MV3's extension-page
-// CSP (script-src 'self') forbids inline scripts.
+// breathing-pause.js — the box-breathing ceremony (FB-2) shown in a detached
+// window before a break is granted. Lives in its own file because MV3's
+// extension-page CSP (script-src 'self') forbids inline scripts.
 //
 // Box breathing: 3 cycles of 4s in → 4s hold → 4s out → 4s hold (~48s).
 //
 // This page never grants the break itself. Both finishing the cycles and
 // closing the window early funnel through the same act — the window closing —
-// and background.js grants the break on windows.onRemoved. So completing the
+// and service-worker.js grants the break on windows.onRemoved. So completing the
 // ceremony just closes the window after a short beat; there is intentionally
 // no "give up" button (to drop an unwanted break, use the End break control).
 
@@ -91,7 +91,7 @@ function finish() {
   countEl.textContent = "";
   cycleEl.textContent = "";
   circle.classList.add("expanded");
-  // Closing the window grants the break (background.js, windows.onRemoved).
+  // Closing the window grants the break (service-worker.js, windows.onRemoved).
   setTimeout(() => window.close(), 900);
 }
 

@@ -1,16 +1,22 @@
-/* options.css — self-contained styles for the full options page.
-   Does NOT depend on popup.css. Wider, roomier, centered column layout. */
+/* settings-page.css — full-page settings UI.
+   Shares the calm, dark aesthetic of the breathing window (breathing-pause.css)
+   and the "Be Aware" wall (be-aware-page.css): deep navy canvas, soft cards, a
+   quiet teal accent. Class names are shared with blocklist-ui.js — keep in sync. */
 
 :root {
-  --bg: #f4f5f7;
-  --surface: #ffffff;
-  --border: #d8dbe0;
-  --text: #1f2329;
-  --muted: #5c6470;
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --danger: #dc2626;
-  --radius: 8px;
+  --bg: #0f141c;
+  --surface: #1a212e;
+  --surface-soft: #202836;
+  --border: #2b3445;
+  --title: #e6ecf5;
+  --text: #9aa7bd;
+  --muted: #76839a;
+  --accent: #6fb1c9;
+  --accent-hover: #8ac5db;
+  --accent-soft: rgba(111, 177, 201, 0.16);
+  --danger: #e07a7a;
+  --shadow: rgba(0, 0, 0, 0.45);
+  --radius: 14px;
 }
 
 * {
@@ -21,79 +27,95 @@ html,
 body {
   margin: 0;
   padding: 0;
+  min-height: 100%;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .options {
-  max-width: 640px;
+  max-width: 620px;
   margin: 0 auto;
-  padding: 48px 24px 64px;
+  padding: 56px 24px 72px;
 }
 
+/* Header ------------------------------------------------------------------- */
 .options-header {
-  margin-bottom: 32px;
+  margin-bottom: 36px;
+  text-align: center;
 }
 
 .options-title {
-  margin: 0 0 12px;
-  font-size: 28px;
+  margin: 0 0 14px;
+  font-size: 30px;
   font-weight: 700;
   letter-spacing: -0.01em;
+  color: var(--title);
 }
 
 .options-intro {
-  margin: 0;
-  color: var(--muted);
+  margin: 0 auto;
+  color: var(--text);
   font-size: 15px;
-  max-width: 52ch;
+  max-width: 48ch;
 }
 
-/* Breathing-gate toggle (FB-2) */
-.breathe-toggle-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 24px;
-  padding: 16px 18px;
+/* Shared card surface ------------------------------------------------------ */
+.global-break,
+.breathe-toggle-row,
+.blocklist-item {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: 0 10px 28px var(--shadow);
+}
+
+/* Breathing-gate toggle (FB-2) -------------------------------------------- */
+.breathe-toggle-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding: 18px 20px;
   cursor: pointer;
   user-select: none;
+  transition: border-color 0.15s ease;
+}
+
+.breathe-toggle-row:hover {
+  border-color: var(--accent);
 }
 
 .breathe-toggle {
   flex: 0 0 auto;
   width: 18px;
   height: 18px;
-  margin: 2px 0 0;
+  margin: 3px 0 0;
   accent-color: var(--accent);
   cursor: pointer;
 }
 
 .breathe-toggle-text {
   font-size: 15px;
-  font-weight: 500;
-  color: var(--text);
+  font-weight: 600;
+  color: var(--title);
 }
 
 .breathe-toggle-text small {
   display: block;
-  margin-top: 2px;
+  margin-top: 3px;
   font-size: 13px;
   font-weight: 400;
   color: var(--muted);
 }
 
-/* Add form */
+/* Add form ----------------------------------------------------------------- */
 .add-form {
   display: flex;
   gap: 12px;
@@ -103,27 +125,31 @@ body {
 .domain-input {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 12px 14px;
+  padding: 13px 15px;
   font-size: 16px;
-  color: var(--text);
+  color: var(--title);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
+.domain-input::placeholder {
+  color: var(--muted);
+}
+
 .domain-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .add-button {
   flex: 0 0 auto;
-  padding: 12px 22px;
+  padding: 13px 24px;
   font-size: 16px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--bg);
   background: var(--accent);
   border: none;
   border-radius: var(--radius);
@@ -140,7 +166,7 @@ body {
   outline-offset: 2px;
 }
 
-/* Error text */
+/* Error text --------------------------------------------------------------- */
 .add-error {
   margin: 0 0 24px;
   min-height: 1.25em;
@@ -148,30 +174,28 @@ body {
   font-size: 14px;
 }
 
-/* Blocklist */
+/* Blocklist ---------------------------------------------------------------- */
 .blocklist {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .blocklist-item {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
   gap: 16px;
-  padding: 14px 18px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  padding: 16px 20px;
 }
 
 .blocklist-domain {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--title);
   word-break: break-all;
 }
 
@@ -183,13 +207,13 @@ body {
   color: var(--danger);
   background: transparent;
   border: 1px solid var(--danger);
-  border-radius: var(--radius);
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .blocklist-remove:hover {
-  color: #ffffff;
+  color: var(--bg);
   background: var(--danger);
 }
 
@@ -198,34 +222,36 @@ body {
   outline-offset: 2px;
 }
 
-/* Global break panel */
+/* Global break panel ------------------------------------------------------- */
 .global-break {
   margin-bottom: 24px;
-  padding: 20px 22px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  padding: 22px 24px;
+}
+
+.global-break:empty {
+  display: none;
 }
 
 .global-break-title {
-  margin: 0 0 14px;
+  margin: 0 0 16px;
   font-size: 18px;
   font-weight: 600;
+  color: var(--title);
 }
 
 .global-break-remaining {
-  margin: 0 0 14px;
+  margin: 0 0 16px;
   font-size: 15px;
-  color: var(--muted);
+  color: var(--text);
 }
 
 .global-break-remaining span {
   font-weight: 600;
-  color: var(--text);
+  color: var(--accent);
   font-variant-numeric: tabular-nums;
 }
 
-/* Break form (global + inline per-row) */
+/* Break form (global + inline per-row) ------------------------------------- */
 .break-form {
   display: flex;
   align-items: center;
@@ -234,8 +260,8 @@ body {
 }
 
 .break-form-inline {
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: 14px;
+  padding-top: 14px;
   border-top: 1px dashed var(--border);
 }
 
@@ -248,12 +274,12 @@ body {
 .duration-hours,
 .duration-minutes {
   width: 64px;
-  padding: 8px 10px;
+  padding: 9px 11px;
   font-size: 15px;
-  color: var(--text);
-  background: var(--surface);
+  color: var(--title);
+  background: var(--surface-soft);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -261,7 +287,7 @@ body {
 .duration-minutes:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .duration-label {
@@ -270,14 +296,15 @@ body {
 }
 
 .break-start {
-  padding: 8px 18px;
+  padding: 9px 20px;
   font-size: 14px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--bg);
   background: var(--accent);
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 
 .break-start:hover {
@@ -285,28 +312,29 @@ body {
 }
 
 .break-start-small {
-  padding: 6px 14px;
+  padding: 7px 16px;
   font-size: 13.5px;
 }
 
 .break-cancel {
-  padding: 8px 16px;
+  padding: 9px 18px;
   font-size: 14px;
   font-weight: 600;
   color: var(--accent);
   background: transparent;
   border: 1px solid var(--accent);
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .break-cancel:hover {
   background: var(--accent);
-  color: #ffffff;
+  color: var(--bg);
 }
 
 .break-cancel-small {
-  padding: 5px 12px;
+  padding: 6px 14px;
   font-size: 13px;
 }
 
@@ -322,12 +350,7 @@ body {
   min-height: 0;
 }
 
-/* Per-row break controls */
-.blocklist-item {
-  flex-direction: column;
-  align-items: stretch;
-}
-
+/* Per-row break controls --------------------------------------------------- */
 .blocklist-row {
   display: flex;
   align-items: center;
@@ -344,19 +367,20 @@ body {
 }
 
 .break-toggle {
-  padding: 6px 14px;
+  padding: 7px 16px;
   font-size: 13.5px;
   font-weight: 600;
-  color: var(--muted);
-  background: transparent;
+  color: var(--text);
+  background: var(--surface-soft);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
 
 .break-toggle:hover {
-  color: var(--text);
-  border-color: var(--text);
+  color: var(--title);
+  border-color: var(--accent);
 }
 
 .blocklist-remaining {
