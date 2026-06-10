@@ -7,16 +7,16 @@
   "permissions": ["declarativeNetRequest", "storage", "tabs", "alarms"],
   "host_permissions": ["<all_urls>"],
   "background": {
-    "service_worker": "src/service-worker.js",
+    "service_worker": "src/shared/service-worker.js",
     "type": "module"
   },
   "action": {
-    "default_popup": "src/toolbar-popup.html"
+    "default_popup": "src/toolbar-popup/toolbar-popup.html"
   },
-  "options_page": "src/settings-page.html",
+  "options_page": "src/settings-page/settings-page.html",
   "web_accessible_resources": [
     {
-      "resources": ["src/be-aware-page.html"],
+      "resources": ["src/be-aware-page/be-aware-page.html"],
       "matches": ["<all_urls>"]
     }
   ]

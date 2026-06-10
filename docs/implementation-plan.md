@@ -18,27 +18,35 @@ into an ordered, buildable sequence of steps.
 
 ## Target file layout
 
+One folder per HTML surface; cross-page code lives in `shared/`.
+
 ```
 websiteBlockerExtension/
 ├─ manifest.json
 ├─ src/
-│  ├─ background.js     # service worker: syncs DNR rules from storage
-│  ├─ storage.js        # blocklist read/write + domain normalization (ES module)
-│  ├─ popup.html
-│  ├─ popup.js
-│  ├─ popup.css
-│  ├─ options.html
-│  ├─ options.js        # imports the shared UI logic
-│  ├─ ui.js             # shared render/add/remove logic for popup + options
-│  ├─ blocked.html      # "Be Aware" page
-│  └─ blocked.css
+│  ├─ toolbar-popup/
+│  │  ├─ toolbar-popup.html
+│  │  ├─ toolbar-popup.js
+│  │  └─ toolbar-popup.css
+│  ├─ settings-page/       # options page
+│  │  ├─ settings-page.html
+│  │  ├─ settings-page.js   # imports the shared UI logic
+│  │  └─ settings-page.css
+│  ├─ be-aware-page/       # "Be Aware" block page
+│  │  ├─ be-aware-page.html
+│  │  ├─ be-aware-page.js
+│  │  └─ be-aware-page.css
+│  └─ shared/
+│     ├─ service-worker.js # syncs DNR rules from storage
+│     ├─ storage.js        # blocklist read/write + domain normalization (ES module)
+│     └─ blocklist-ui.js   # shared render/add/remove logic for popup + settings
 └─ docs/                # (already present)
 ```
 
-> Note: `ui.js` is added beyond the architecture doc's layout so the popup and
-> options page share one implementation instead of duplicating it (FR-3 wants
-> identical behavior in both surfaces). If you'd rather keep it flat, fold
-> `ui.js` into `popup.js` and have `options.js` import from `popup.js`.
+> Note: `shared/blocklist-ui.js` exists so the popup and settings page share one
+> implementation instead of duplicating it (FR-3 wants identical behavior in both
+> surfaces). The later box-breathing gate (FB-2) adds a fourth page folder,
+> `breathing-pause/`.
 
 ---
 
@@ -49,15 +57,15 @@ MV3 manifest wiring every component together.
 - `manifest_version: 3`, `name`, `version`, `description`.
 - `permissions`: `["declarativeNetRequest", "storage"]`.
 - `host_permissions`: `["<all_urls>"]` (lets redirect rules apply to any blocked site).
-- `background`: `{ "service_worker": "src/background.js", "type": "module" }`
-  (`type: module` so `background.js` can `import` from `storage.js`).
-- `action`: `{ "default_popup": "src/popup.html" }` (no `default_icon`).
-- `options_page`: `"src/options.html"`.
-- `web_accessible_resources`: expose `src/blocked.html` to `<all_urls>` so DNR
-  can redirect to it. Shape:
+- `background`: `{ "service_worker": "src/shared/service-worker.js", "type": "module" }`
+  (`type: module` so `service-worker.js` can `import` from `storage.js`).
+- `action`: `{ "default_popup": "src/toolbar-popup/toolbar-popup.html" }` (no `default_icon`).
+- `options_page`: `"src/settings-page/settings-page.html"`.
+- `web_accessible_resources`: expose `src/be-aware-page/be-aware-page.html` to
+  `<all_urls>` so DNR can redirect to it. Shape:
   ```json
   "web_accessible_resources": [
-    { "resources": ["src/blocked.html"], "matches": ["<all_urls>"] }
+    { "resources": ["src/be-aware-page/be-aware-page.html"], "matches": ["<all_urls>"] }
   ]
   ```
 
@@ -66,7 +74,7 @@ manifest errors.
 
 ---
 
-## Step 2 — `src/storage.js` (storage + normalization)
+## Step 2 — `src/shared/storage.js` (storage + normalization)
 
 The shared data layer. Pure-ish, no DOM. Exports:
 
@@ -94,7 +102,7 @@ testing decision.
 
 ---
 
-## Step 3 — `src/background.js` (the DNR sync engine)
+## Step 3 — `src/shared/service-worker.js` (the DNR sync engine)
 
 The brain. Imports `getBlocklist` from `storage.js`.
 
@@ -105,7 +113,7 @@ The brain. Imports `getBlocklist` from `storage.js`.
     id,
     priority: 1,
     action: { type: "redirect",
-              redirect: { extensionPath: "/src/blocked.html" } },
+              redirect: { extensionPath: "/src/be-aware-page/be-aware-page.html" } },
     condition: {
       regexFilter: "^https?://(?:www\\.)?" + escapeRegex(host) + "(?::\\d+)?(?:[/?#]|$)",
       resourceTypes: ["main_frame"]
@@ -129,22 +137,22 @@ worker console).
 
 ---
 
-## Step 4 — `src/blocked.html` + `src/blocked.css`
+## Step 4 — `src/be-aware-page/be-aware-page.html` + `be-aware-page.css`
 
 The redirect target. Self-contained, no network, no inline script needed.
 
-- `blocked.html`: a centered "Be Aware" heading and a short message. Links the
-  stylesheet.
-- `blocked.css`: simple centered layout, readable typography. Static only.
+- `be-aware-page.html`: a centered "Be Aware" heading and a short message. Links
+  the stylesheet.
+- `be-aware-page.css`: simple centered layout, readable typography. Static only.
 
 **Done when:** opening
-`chrome-extension://<id>/src/blocked.html` directly shows the styled page.
+`chrome-extension://<id>/src/be-aware-page/be-aware-page.html` directly shows the styled page.
 
 ---
 
-## Step 5 — `src/ui.js` (shared popup/options logic)
+## Step 5 — `src/shared/blocklist-ui.js` (shared popup/settings logic)
 
-DOM logic shared by popup and options. Imports from `storage.js`. Exports one
+DOM logic shared by popup and settings page. Imports from `storage.js`. Exports one
 `initUI(root)` that, given a container element, wires up:
 
 - An add form (text input + Add button) → `addDomain()`, then re-render. Show
@@ -160,23 +168,23 @@ Expects a known set of element IDs/structure that both HTML files provide.
 
 ---
 
-## Step 6 — `src/popup.html` + `src/popup.js` + `src/popup.css`
+## Step 6 — `src/toolbar-popup/toolbar-popup.html` + `toolbar-popup.js` + `toolbar-popup.css`
 
-- `popup.html`: the add form + list container; loads `popup.css` and
-  `popup.js` (`<script type="module">`).
-- `popup.js`: `import { initUI } from "./ui.js"` and call it on the popup root.
-- `popup.css`: compact width suitable for a toolbar popup (~320px).
+- `toolbar-popup.html`: the add form + list container; loads `toolbar-popup.css` and
+  `toolbar-popup.js` (`<script type="module">`).
+- `toolbar-popup.js`: `import { initUI } from "../shared/blocklist-ui.js"` and call it on the popup root.
+- `toolbar-popup.css`: compact width suitable for a toolbar popup (~320px).
 
 **Done when:** clicking the toolbar icon shows a working add/list/remove UI.
 
 ---
 
-## Step 7 — `src/options.html` + `src/options.js`
+## Step 7 — `src/settings-page/settings-page.html` + `settings-page.js`
 
-- `options.html`: same structure as the popup, more spacious layout; loads
-  `options.js` as a module.
-- `options.js`: `import { initUI } from "./ui.js"` and call it.
-- Reuse `popup.css` or add minimal options-specific CSS for a wider page.
+- `settings-page.html`: same structure as the popup, more spacious layout; loads
+  `settings-page.js` as a module.
+- `settings-page.js`: `import { initUI } from "../shared/blocklist-ui.js"` and call it.
+- Reuse the popup's CSS approach or add minimal settings-specific CSS for a wider page.
 
 **Done when:** the options page (via `chrome://extensions` → Details →
 Extension options) offers the same add/list/remove behavior.
@@ -211,21 +219,21 @@ doesn't fire, inspect the service worker console
 ## Build order summary
 
 1. `manifest.json` — scaffold loads cleanly.
-2. `storage.js` — data + normalization.
-3. `background.js` — DNR rules sync from storage.
-4. `blocked.html` / `blocked.css` — redirect target.
-5. `ui.js` — shared UI logic.
-6. `popup.*` — toolbar UI.
-7. `options.*` — options-page UI.
+2. `shared/storage.js` — data + normalization.
+3. `shared/service-worker.js` — DNR rules sync from storage.
+4. `be-aware-page/*` — redirect target.
+5. `shared/blocklist-ui.js` — shared UI logic.
+6. `toolbar-popup/*` — toolbar UI.
+7. `settings-page/*` — settings-page UI.
 8. Manual verification pass.
 
 ## Risks / things to watch (from architecture.md)
 
-- **`web_accessible_resources`** must list `src/blocked.html` or the redirect
-  fails silently.
+- **`web_accessible_resources`** must list `src/be-aware-page/be-aware-page.html`
+  or the redirect fails silently.
 - **Rule IDs** must be unique positive integers; rebuilding the whole set each
   change avoids stale rules.
 - **Service worker lifecycle:** the worker may sleep — fine, because DNR rules
   persist independently. Sync runs on install/startup/onChanged only.
-- **`background` must be `type: "module"`** for the `import` from `storage.js`
+- **`background` must be `type: "module"`** for the `import` from `shared/storage.js`
   to work; otherwise drop ES imports in the worker and inline what it needs.

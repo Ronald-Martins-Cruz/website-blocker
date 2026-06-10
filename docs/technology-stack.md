@@ -34,7 +34,7 @@ blocking `webRequest` API with `declarativeNetRequest`, which is what we use.
     whole-host boundary and every path/query/fragment under it.
   - (We use `regexFilter` instead of `urlFilter: "||host^"` because the `||`
     token would match *all* subdomains, which we don't want.)
-- The rule's **action is `redirect`** to our bundled `blocked.html`, and the
+- The rule's **action is `redirect`** to our bundled `be-aware-page.html`, and the
   **condition restricts to `resourceTypes: ["main_frame"]`** so we only
   intercept real page navigations (not every image/script), giving us the
   "Be Aware" page for FR-2.

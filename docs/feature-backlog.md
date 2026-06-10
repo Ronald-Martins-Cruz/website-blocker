@@ -7,8 +7,9 @@ filter to pass through.
 
 This complements the shipped v1 ([requirements.md](requirements.md)) and the
 already-implemented **breaks** layer (temporary "let me through" windows, global
-and per-site, in [storage.js](../src/storage.js) /
-[background.js](../src/background.js) / [ui.js](../src/ui.js)).
+and per-site, in [storage.js](../src/shared/storage.js) /
+[service-worker.js](../src/shared/service-worker.js) /
+[blocklist-ui.js](../src/shared/blocklist-ui.js)).
 
 ---
 
@@ -43,7 +44,7 @@ itself, removing the daily decision.
   `{ host, mode: "always" | "scheduled", windows: [{ days, start, end }] }`
   (or a parallel schedule map keyed by host). Migration: wrap existing strings
   as `{ host, mode: "always" }`.
-- [background.js](../src/background.js) needs alarms at **window boundaries**
+- [service-worker.js](../src/shared/service-worker.js) needs alarms at **window boundaries**
   (open/close), not just at break expiry, to re-sync the DNR rule set when a
   window opens or closes.
 - `getEffectiveBlockHosts()` becomes: `always` entries ∪ `scheduled` entries
@@ -66,7 +67,7 @@ gets the same mindful pause the wall offers.
   Cancelling/ending an active break never asks for breathing (returning to
   blocked is virtuous, never gated).
 - **Runs in a detached window** (`chrome.windows.create`, e.g.
-  `src/breathe.html`), because a Chrome **popup closes on blur** and a ~48s
+  `src/breathing-pause/breathing-pause.html`), because a Chrome **popup closes on blur** and a ~48s
   ceremony inside it would be lost on any outside click. The detached window
   does not close on blur and does not pollute the tab history. It receives the
   break params (`global` vs site `host`, duration) via query string.
@@ -80,7 +81,7 @@ gets the same mindful pause the wall offers.
 
 **Recommended defaults (open for change)**
 - Toggle **on by default** — it is the signature feature; opt out if unwanted.
-- The wall's existing breathing visual ([blocked.html](../src/blocked.html)) and
+- The wall's existing breathing visual ([be-aware-page.html](../src/be-aware-page/be-aware-page.html)) and
   this box-breathing are two separate components for now; the visual can be
   shared later, but the wall stays as-is per current preference.
 
@@ -108,9 +109,9 @@ as what we build.
 
 ## 3. Notes
 
-The mindful **wall** is already in place: [blocked.html](../src/blocked.html)
+The mindful **wall** is already in place: [be-aware-page.html](../src/be-aware-page/be-aware-page.html)
 shows a breathing visual and a reflective message, and
-[blocked.js](../src/blocked.js) fills `#prompt` with a random reflective question
+[be-aware-page.js](../src/be-aware-page/be-aware-page.js) fills `#prompt` with a random reflective question
 on each load (CSP-safe, its own file because MV3 forbids inline scripts). Both
 FB-2's tone and any future prompt rotation should stay consistent with this
 existing voice.
