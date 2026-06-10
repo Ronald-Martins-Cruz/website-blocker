@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Take a Breath</title>
+    <link rel="stylesheet" href="breathe.css" />
+  </head>
+  <body>
+    <main class="card">
+      <p class="eyebrow">A moment before your break</p>
+      <p class="subtitle" id="subtitle"></p>
+
+      <div class="breath" aria-hidden="true">
+        <div class="breath-circle" id="circle"></div>
+        <div class="breath-inner">
+          <span class="breath-phase" id="phase">Breathe in</span>
+          <span class="breath-count" id="count">4</span>
+        </div>
+      </div>
+
+      <p class="cycle" id="cycle">Cycle 1 of 3</p>
+
+      <p class="hint">
+        Close this window any time to take your break now.
+      </p>
+    </main>
+
+    <script src="breathe.js"></script>
+  </body>
+</html>

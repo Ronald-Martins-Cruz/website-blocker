@@ -4,6 +4,8 @@
 
 const STORAGE_KEY = "blocklist";
 const BREAKS_KEY = "breaks";
+const BREATHE_GATE_KEY = "breatheGate";
+const PENDING_BREATHE_KEY = "pendingBreathe";
 
 /**
  * Normalize whatever the user typed into a canonical host to store.
@@ -191,6 +193,87 @@ export async function cancelSiteBreak(host) {
     delete breaks.sites[host];
     await setBreaks(breaks);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Box-breathing gate (FB-2): a mindful pause shown before a break is granted.
+//
+// Two pieces of state:
+//   breatheGate    — boolean toggle, on by default (the signature feature).
+//   pendingBreathe — breaks that open breathe windows will grant when they
+//                    close, keyed by window id:
+//                      { [windowId]: { host: string|null, durationMs } }
+//                    `host === null` means the global break. Keying by window
+//                    keeps concurrent ceremonies independent, and "take" (read
+//                    + delete in one write) is the single "already granted"
+//                    guard — once taken, a window can't grant twice.
+// ---------------------------------------------------------------------------
+
+/**
+ * Is the box-breathing gate enabled? Defaults to true (on) when unset.
+ * @returns {Promise<boolean>}
+ */
+export async function getBreatheGate() {
+  const result = await chrome.storage.local.get(BREATHE_GATE_KEY);
+  const raw = result[BREATHE_GATE_KEY];
+  return typeof raw === "boolean" ? raw : true;
+}
+
+/**
+ * Enable/disable the box-breathing gate.
+ * @param {boolean} enabled
+ * @returns {Promise<void>}
+ */
+export async function setBreatheGate(enabled) {
+  await chrome.storage.local.set({ [BREATHE_GATE_KEY]: Boolean(enabled) });
+}
+
+async function getPendingBreatheMap() {
+  const result = await chrome.storage.local.get(PENDING_BREATHE_KEY);
+  const raw = result[PENDING_BREATHE_KEY];
+  return raw && typeof raw === "object" ? raw : {};
+}
+
+/**
+ * Record the break a breathe window will grant when it closes.
+ * @param {number} windowId
+ * @param {string|null} host canonical host, or null for the global break
+ * @param {number} durationMs
+ * @returns {Promise<void>}
+ */
+export async function setPendingBreathe(windowId, host, durationMs) {
+  const map = await getPendingBreatheMap();
+  map[windowId] = { host: host ?? null, durationMs };
+  await chrome.storage.local.set({ [PENDING_BREATHE_KEY]: map });
+}
+
+/**
+ * Read *and remove* the pending break for a window, in a single write. Returns
+ * null if that window has no pending break (already taken, or never had one) —
+ * this atomic take is what guarantees a break is granted at most once.
+ * @param {number} windowId
+ * @returns {Promise<{host: string|null, durationMs: number}|null>}
+ */
+export async function takePendingBreathe(windowId) {
+  const map = await getPendingBreatheMap();
+  const entry = map[windowId];
+  if (!entry) return null;
+  delete map[windowId];
+  await chrome.storage.local.set({ [PENDING_BREATHE_KEY]: map });
+  return {
+    host: typeof entry.host === "string" ? entry.host : null,
+    durationMs: entry.durationMs
+  };
+}
+
+/**
+ * Forget all pending breathe records. Called on startup/install: no breathe
+ * windows survive a browser restart, so any leftover entries are stale and a
+ * reused window id must never grant a break that was abandoned.
+ * @returns {Promise<void>}
+ */
+export async function clearAllPendingBreathe() {
+  await chrome.storage.local.remove(PENDING_BREATHE_KEY);
 }
 
 /**

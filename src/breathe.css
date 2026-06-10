@@ -1,0 +1,138 @@
+/* breathe.css — the box-breathing window (FB-2). Shares the calm, dark
+   aesthetic of the "Be Aware" wall (blocked.css). */
+
+:root {
+  --bg: #0f141c;
+  --card-bg: #1a212e;
+  --title: #e6ecf5;
+  --text: #9aa7bd;
+  --accent: #6fb1c9;
+  --shadow: rgba(0, 0, 0, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  line-height: 1.6;
+}
+
+.card {
+  width: 100%;
+  max-width: 30rem;
+  padding: 3rem 2.25rem;
+  text-align: center;
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px var(--shadow);
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.subtitle {
+  margin: 0 0 2.25rem;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+/* Breathing guide ---------------------------------------------------------- */
+.breath {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15rem;
+  height: 15rem;
+  margin: 0 auto 2rem;
+}
+
+.breath-circle {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(111, 177, 201, 0.35),
+    rgba(111, 177, 201, 0.05)
+  );
+  border: 1px solid rgba(111, 177, 201, 0.4);
+  /* Floor the contracted size so the widest label ("Breathe out") always fits. */
+  transform: scale(0.68);
+  /* The phase length: the circle eases between sizes across the full 4s. */
+  transition: transform 4s ease-in-out;
+}
+
+.breath-circle.expanded {
+  transform: scale(1);
+}
+
+.breath-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.breath-phase {
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  color: var(--title);
+}
+
+.breath-count {
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: var(--title);
+  font-variant-numeric: tabular-nums;
+  min-height: 2.4rem;
+}
+
+.cycle {
+  margin: 0 0 1.75rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--text);
+  opacity: 0.75;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breath-circle {
+    transition: none;
+    transform: scale(0.8);
+  }
+  .breath-circle.expanded {
+    transform: scale(0.8);
+  }
+}

@@ -20,8 +20,31 @@ import {
   startGlobalBreak,
   cancelGlobalBreak,
   startSiteBreak,
-  cancelSiteBreak
+  cancelSiteBreak,
+  getBreatheGate,
+  setBreatheGate
 } from "./storage.js";
+
+/**
+ * Begin a break, routing through the box-breathing gate (FB-2) when it's on.
+ * With the gate on we hand the request to the background worker, which opens
+ * the detached breathe window; the break is granted only once that window
+ * closes. With it off, the break starts immediately (the original behavior).
+ * @param {string|null} host canonical host, or null for the global break
+ * @param {number} durationMs
+ * @returns {Promise<void>}
+ */
+async function requestBreak(host, durationMs) {
+  if (await getBreatheGate()) {
+    chrome.runtime.sendMessage({ type: "breathe-gate", host: host ?? null, durationMs });
+    return;
+  }
+  if (host === null) {
+    await startGlobalBreak(durationMs);
+  } else {
+    await startSiteBreak(host, durationMs);
+  }
+}
 
 /**
  * Format a millisecond duration as "1h 23m 45s", dropping leading zero units.
@@ -104,6 +127,23 @@ export function initUI(root) {
   // user's input isn't blown away by an unrelated storage change.
   const expanded = new Set();
 
+  // Optional: the box-breathing gate toggle (FB-2). Pages that don't render it
+  // simply leave the gate at its stored value (on by default).
+  const breatheToggle = root.querySelector("#breathe-toggle");
+  if (breatheToggle) {
+    getBreatheGate().then((on) => {
+      breatheToggle.checked = on;
+    });
+    breatheToggle.addEventListener("change", () => {
+      setBreatheGate(breatheToggle.checked);
+    });
+  }
+
+  async function syncBreatheToggle() {
+    if (!breatheToggle) return;
+    breatheToggle.checked = await getBreatheGate();
+  }
+
   function showError(message) {
     errorEl.textContent = message || "";
   }
@@ -165,7 +205,7 @@ export function initUI(root) {
         err.textContent = "Enter at least 1 minute.";
         return;
       }
-      await startGlobalBreak(ms);
+      await requestBreak(null, ms);
     });
 
     formEl.append(hWrap, mWrap, start);
@@ -267,7 +307,7 @@ export function initUI(root) {
           return;
         }
         expanded.delete(host);
-        await startSiteBreak(host, ms);
+        await requestBreak(host, ms);
       });
 
       formEl.append(hWrap, mWrap, start);
@@ -339,6 +379,9 @@ export function initUI(root) {
       Object.prototype.hasOwnProperty.call(changes, "breaks")
     ) {
       render();
+    }
+    if (Object.prototype.hasOwnProperty.call(changes, "breatheGate")) {
+      syncBreatheToggle();
     }
   });
 

@@ -8,7 +8,12 @@
 import {
   getBreaks,
   getEffectiveBlockHosts,
-  cleanExpiredBreaks
+  cleanExpiredBreaks,
+  startGlobalBreak,
+  startSiteBreak,
+  setPendingBreathe,
+  takePendingBreathe,
+  clearAllPendingBreathe
 } from "./storage.js";
 
 const GLOBAL_ALARM = "break:__global__";
@@ -138,10 +143,77 @@ async function syncAlarms() {
  * @returns {Promise<void>}
  */
 async function fullSync() {
+  await clearAllPendingBreathe();
   await cleanExpiredBreaks();
   await syncRules();
   await syncAlarms();
 }
+
+// ---------------------------------------------------------------------------
+// Box-breathing gate (FB-2). The popup/options UI asks us to open a detached
+// breathe window instead of granting a break outright. The break is granted
+// when that window closes — whether the user completed the 3 cycles (the page
+// closes itself) or closed it early to honor real urgency. Both funnel through
+// the single windows.onRemoved path below, so the break is granted exactly
+// once. A detached window is used (not the popup) because a popup closes on
+// blur, which would lose the ~48s ceremony on any outside click.
+
+const BREATHE_PAGE = "src/breathe.html";
+
+/**
+ * Open the breathe window for a requested break and remember what it will
+ * grant on close.
+ * @param {string|null} host  canonical host, or null for the global break
+ * @param {number} durationMs break length to grant once the gate is passed
+ * @returns {Promise<void>}
+ */
+async function openBreatheGate(host, durationMs) {
+  const params = new URLSearchParams({ duration: String(durationMs) });
+  if (host) params.set("host", host);
+  const url = chrome.runtime.getURL(BREATHE_PAGE) + "?" + params.toString();
+
+  const win = await chrome.windows.create({
+    url,
+    type: "popup",
+    width: 460,
+    height: 600,
+    focused: true
+  });
+
+  if (win && typeof win.id === "number") {
+    await setPendingBreathe(win.id, host ?? null, durationMs);
+  }
+}
+
+/**
+ * Grant the pending break tied to a just-closed window. takePendingBreathe
+ * removes the record as it reads it, so a duplicate onRemoved can't double-grant.
+ * @param {number} windowId
+ * @returns {Promise<void>}
+ */
+async function grantPendingBreathe(windowId) {
+  const pending = await takePendingBreathe(windowId);
+  if (!pending) return;
+
+  if (pending.host === null) {
+    await startGlobalBreak(pending.durationMs);
+  } else {
+    await startSiteBreak(pending.host, pending.durationMs);
+  }
+}
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message && message.type === "breathe-gate") {
+    const host = typeof message.host === "string" ? message.host : null;
+    if (Number.isFinite(message.durationMs) && message.durationMs > 0) {
+      openBreatheGate(host, message.durationMs);
+    }
+  }
+});
+
+chrome.windows.onRemoved.addListener((windowId) => {
+  grantPendingBreathe(windowId);
+});
 
 // Triggers.
 chrome.runtime.onInstalled.addListener(() => {

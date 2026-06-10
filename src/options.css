@@ -56,6 +56,43 @@ body {
   max-width: 52ch;
 }
 
+/* Breathing-gate toggle (FB-2) */
+.breathe-toggle-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  user-select: none;
+}
+
+.breathe-toggle {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.breathe-toggle-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.breathe-toggle-text small {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
 /* Add form */
 .add-form {
   display: flex;
